@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">X5_Debug</string>
+    <string name="log_area_hint">日志区域</string>
+    <string name="url_hint">请输入url</string>
+    <string name="scan_qr_code">扫一扫</string>
+    <string name="inspect">调试</string>
+    <string name="open">打开</string>
+    <string name="title_activity_test_web_h5">TestWebH5Activity</string>
+</resources>

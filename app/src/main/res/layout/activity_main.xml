@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".MainActivity">
+
+    <ScrollView
+        android:id="@+id/view_main"
+        android:layout_width="362dp"
+        android:layout_height="194dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintBottom_toTopOf="@+id/logArea"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.489"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.123">
+
+        <EditText
+            android:id="@+id/webViewUrl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:gravity="start|top"
+            android:hint="@string/url_hint"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:minLines="1"
+            android:lines="9"
+            android:minHeight="194dp" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/scanQrcode"
+        android:layout_width="104dp"
+        android:layout_height="48dp"
+        android:layout_marginStart="24dp"
+        android:text="@string/scan_qr_code"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/inspect"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.405" />
+
+    <Button
+        android:id="@+id/inspect"
+        android:layout_width="104dp"
+        android:layout_height="48dp"
+        android:text="@string/inspect"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.405" />
+
+    <Button
+        android:id="@+id/openWebview"
+        android:layout_width="97dp"
+        android:layout_height="48dp"
+        android:layout_marginEnd="24dp"
+        android:text="@string/open"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.968"
+        app:layout_constraintStart_toEndOf="@+id/inspect"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.405" />
+
+    <ScrollView
+        android:id="@+id/logArea"
+        android:layout_width="360dp"
+        android:layout_height="354dp"
+        android:contentDescription="@string/log_area_hint"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.942">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/logView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+    </ScrollView>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
