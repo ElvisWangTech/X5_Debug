@@ -12,4 +12,8 @@
     <color name="light_blue_A200">#FF40C4FF</color>
     <color name="light_blue_A400">#FF00B0FF</color>
     <color name="black_overlay">#66000000</color>
+    <color name="warn">#66FFCC33</color>
+    <color name="info">#66666666</color>
+    <color name="debug">#6633CC00</color>
+    <color name="error">#66CC3300</color>
 </resources>

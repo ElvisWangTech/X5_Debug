@@ -17,7 +17,7 @@
         app:layout_constraintHorizontal_bias="0.489"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.123">
+        app:layout_constraintVertical_bias="0.55">
 
         <EditText
             android:id="@+id/webViewUrl"
@@ -28,48 +28,65 @@
             android:hint="@string/url_hint"
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
-            android:minLines="1"
             android:lines="9"
-            android:minHeight="194dp" />
+            android:minHeight="194dp"
+            android:minLines="1"
+            tools:ignore="TextFields" />
     </ScrollView>
 
     <Button
         android:id="@+id/scanQrcode"
         android:layout_width="104dp"
         android:layout_height="48dp"
-        android:layout_marginStart="24dp"
         android:text="@string/scan_qr_code"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/inspect"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintBottom_toTopOf="@+id/view_main"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.084"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.405" />
+        app:layout_constraintVertical_bias="0.576" />
 
     <Button
         android:id="@+id/inspect"
-        android:layout_width="104dp"
+        android:layout_width="85dp"
         android:layout_height="48dp"
+        android:background="#33CC00"
         android:text="@string/inspect"
+        android:textColor="#212121"
+        android:textColorHint="#888888"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.405" />
+        app:layout_constraintVertical_bias="0.44" />
+
+    <Button
+        android:id="@+id/escape"
+        android:layout_width="85dp"
+        android:layout_height="48dp"
+        android:background="#33CC00"
+        android:minHeight="36dp"
+        android:text="@string/escape"
+        android:textColor="#212121"
+        android:textColorHint="#888888"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.073"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.44" />
 
     <Button
         android:id="@+id/openWebview"
         android:layout_width="97dp"
         android:layout_height="48dp"
-        android:layout_marginEnd="24dp"
         android:text="@string/open"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/view_main"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.968"
-        app:layout_constraintStart_toEndOf="@+id/inspect"
+        app:layout_constraintHorizontal_bias="0.92"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.405" />
+        app:layout_constraintVertical_bias="0.576" />
 
     <ScrollView
         android:id="@+id/logArea"
@@ -89,6 +106,7 @@
 
             <TextView
                 android:id="@+id/logView"
+                android:textIsSelectable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </LinearLayout>
