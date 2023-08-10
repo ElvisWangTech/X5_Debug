@@ -1,16 +1,16 @@
 package com.example.x5_debug
 
 import android.content.Intent
-import android.net.Network
+import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import com.example.x5_debug.tookit.UrlFormatTool
 import com.tencent.smtt.export.external.TbsCoreSettings
 import com.tencent.smtt.sdk.QbSdk
@@ -22,8 +22,9 @@ class MainActivity : ComponentActivity() {
 
     private var logView: TextView?=null;
     private var webViewUrl: EditText?=null;
-    private var tag: String = "MainActivity";
+    private val tag: String = MainActivity::class.java.simpleName
     private val defaultUrl = "https://webresource.123kanfang.com/test/5i5j/index.html?type=1&cid=1&hid=501160900&m=WoAiWoJia-8361079_b1a67185-7cb9-4a99-b8e6-212de40af207&bid=8210307&title=%E9%80%9A%E5%B7%9E%E5%8D%8E%E4%B8%9A%E4%B8%9C%E6%96%B9%E7%8E%AB%E7%91%B0D%E5%8C%BA%EF%BC%8C%E4%B8%89%E5%B1%85%E5%AE%A4%EF%BC%8C%E6%96%B0%E7%A4%BE%E5%8C%BA%EF%BC%8C%E5%8D%95%E4%BB%B744800%E4%B8%80%E5%B9%B3.%27&equipment=pc";
+    private var toActivity: ActivityResultLauncher<Intent>?=null;
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,8 +36,13 @@ class MainActivity : ComponentActivity() {
         webViewUrl = findViewById(R.id.webViewUrl)
         webViewUrl?.setText(defaultUrl);
 
+        toActivity = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            val contents = it.data?.getStringExtra("SCAN_RESULT")
+            val format = it.data?.getStringExtra("SCAN_RESULT_FORMAT")
+            log("扫描结果：$contents - $format")
+            webViewUrl?.setText(contents)
+        }
         bindEvents()
-
     }
 
     private fun checkX5() {
@@ -112,7 +118,9 @@ class MainActivity : ComponentActivity() {
         }
         val scanBtn: Button = findViewById(R.id.scanQrcode)
         scanBtn.setOnClickListener {
-
+            val intent = Intent("com.google.zxing.client.android.SCAN")
+            intent.putExtra("SCAN_MODE", "QR_CODE_MODE")
+            toActivity?.launch(intent);
         }
     }
 
