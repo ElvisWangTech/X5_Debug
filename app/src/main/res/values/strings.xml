@@ -6,5 +6,7 @@
     <string name="inspect">x5调试</string>
     <string name="escape">转义</string>
     <string name="open">打开</string>
+    <string name="downloadX5">x5下载</string>
     <string name="title_activity_test_web_h5">TestWebH5Activity</string>
+    <string name="spinner_prompt">选择tbs最小内核版本</string>
 </resources>

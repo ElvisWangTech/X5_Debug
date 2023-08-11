@@ -1,20 +1,16 @@
 package com.example.x5_debug
 
-import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.media.AudioManager
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.ViewGroup
-import android.webkit.PermissionRequest
-import com.tencent.smtt.sdk.WebChromeClient
+import android.widget.LinearLayout
+import android.widget.RelativeLayout
+import androidx.appcompat.app.AppCompatActivity
 import com.tencent.smtt.sdk.WebSettings
 import com.tencent.smtt.sdk.WebView
 import com.tencent.smtt.sdk.WebViewClient
-import android.widget.LinearLayout
-import android.widget.RelativeLayout
-import androidx.compose.ui.platform.isDebugInspectorInfoEnabled
-import java.lang.Exception
 
 class TestWebH5Activity : AppCompatActivity() {
 

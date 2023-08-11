@@ -13,21 +13,32 @@ import com.tencent.smtt.sdk.TbsListener
 
 class X5Tool {
     companion object {
+        private var logHandler: Handler?=null;
+        var isX5Ready: Boolean = false;
+        val coreMinVersions = arrayOf(-1, 46247, 46248, 46249, 46250); // -1 表示不限制，不限制表示拉取sdk支持的最低版本
+        var selectionIndex = 0
+        fun setSelectionPos(i: Int) {
+            selectionIndex = i;
+            logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "选择tbs最小内核版本：${coreMinVersions[i]}"))
+        }
         fun formatErrMsg(errCode: Int): String {
             var errMsg = "unKnown error"
             when (errCode) {
-                TbsCommonCode.DOWNLOAD_CANCEL_NOT_WIFI -> errMsg = "cancel by not wifi"
-                TbsCommonCode.DOWNLOAD_CANCEL_REQUESTING -> errMsg = "cancel requesting"
-                TbsCommonCode.DOWNLOAD_FLOW_CANCEL -> errMsg = "cancel by flow"
-                TbsCommonCode.DOWNLOAD_CANCEL_PRIVATE_CDN_MODE -> errMsg = "cancel by private cdn mode"
-                TbsCommonCode.DOWNLOAD_NO_NEED_REQUEST -> errMsg = "no need download"
-                TbsCommonCode.INSTALL_FOR_PREINIT_CALLBACK -> errMsg = "preinit callback"
-                TbsCommonCode.NETWORK_UNAVAILABLE -> errMsg = "network unavailable"
-                TbsCommonCode.STARTDOWNLOAD_OUT_OF_MAXTIME -> errMsg = "out of time"
+                TbsCommonCode.DOWNLOAD_CANCEL_NOT_WIFI -> errMsg = "非Wi-Fi，不发起下载"
+                TbsCommonCode.DOWNLOAD_CANCEL_REQUESTING -> errMsg = "下载请求中，不重复发起，取消下载"
+                TbsCommonCode.DOWNLOAD_FLOW_CANCEL -> errMsg = "带宽不允许，下载取消"
+                TbsCommonCode.DOWNLOAD_CANCEL_PRIVATE_CDN_MODE -> errMsg = "不支持私有CDN模式，下载取消"
+                TbsCommonCode.DOWNLOAD_NO_NEED_REQUEST -> errMsg = "不发起下载请求"
+                TbsCommonCode.INSTALL_FOR_PREINIT_CALLBACK -> errMsg = "预加载中间态，非异常，可忽略"
+                TbsCommonCode.NETWORK_UNAVAILABLE -> errMsg = "网络不可用"
+                TbsCommonCode.STARTDOWNLOAD_OUT_OF_MAXTIME -> errMsg = "发起下载次数超过1次"
             }
             return errMsg;
         }
 
+        /**
+         * 初始化x5环境：检查x5并绑定监听
+         */
         fun init(applicationContext: Context, logHandler:Handler?) {
             QbSdk.initX5Environment(applicationContext, object : QbSdk.PreInitCallback {
                 override fun onCoreInitFinished() {
@@ -42,29 +53,33 @@ class X5Tool {
                  */
                 override fun onViewInitFinished(isX5: Boolean) {
                     logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5预初始化完成，是否启用x5：$isX5"))
-                    if (!isX5 && !TbsDownloader.isDownloading()) {
-                        logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "开始下载x5内核"))
-                        QbSdk.reset(applicationContext);
-                        TbsDownloader.startDownload(applicationContext)
-                    } else {
-                        logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5内核版本：${QbSdk.getTbsVersion(applicationContext).toString()}"))
+                    isX5Ready = isX5;
+                    if (isX5) {
+                        val tbsVer = QbSdk.getTbsVersion(applicationContext).toString()
+                        val tbsSdkVer = QbSdk.getTbsSdkVersion().toString()
+                        logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "内核版本：${tbsVer}, sdk版本：${tbsSdkVer}"))
                     }
+
                 }
             })
 
             QbSdk.setTbsListener(object : TbsListener {
                 override fun onDownloadFinish(errCode: Int) {
-                    logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5下载完成"))
                     // 虽然下载结束，但有可能失败
                     if (errCode != TbsCommonCode.DOWNLOAD_SUCCESS) {
                         logHandler?.sendMessage(Message.obtain(logHandler, Log.WARN, "x5下载异常-errCode:$errCode errMsg: ${X5Tool.formatErrMsg(errCode)}"))
+                    } else {
+                        logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5下载完成"))
                     }
                 }
 
                 override fun onInstallFinish(errCode: Int) {
-                    logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5安装完成, 内核版本：${QbSdk.getTbsVersion(applicationContext).toString()}"))
+                    val tbsVer = QbSdk.getTbsVersion(applicationContext).toString()
+                    val tbsSdkVer = QbSdk.getTbsSdkVersion().toString()
                     if (errCode != TbsCommonCode.INSTALL_SUCCESS) {
                         logHandler?.sendMessage(Message.obtain(logHandler, Log.WARN, "x5安装异常-errCode:$errCode errMsg: ${X5Tool.formatErrMsg(errCode)}"))
+                    } else {
+                        logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "x5安装完成, 内核版本：${tbsVer}, sdk版本：${tbsSdkVer}"))
                     }
                 }
 
@@ -79,6 +94,26 @@ class X5Tool {
             map[TbsCoreSettings.TBS_SETTINGS_USE_SPEEDY_CLASSLOADER] = true;
             map[TbsCoreSettings.TBS_SETTINGS_USE_DEXLOADER_SERVICE] = true;
             QbSdk.initTbsSettings(map);
+            this.logHandler = logHandler;
+        }
+
+        /**
+         * 开始下载x5内核
+         */
+        fun startDownload(applicationContext: Context, reset: Boolean = false) {
+            logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "准备下载x5内核， reset: $reset"))
+            if (reset) {
+                QbSdk.reset(applicationContext);
+                isX5Ready = false;
+            }
+            val selectedCoreMinVersion = coreMinVersions[selectionIndex];
+            QbSdk.setCoreMinVersion(selectedCoreMinVersion)
+            if (!isX5Ready && !TbsDownloader.isDownloading()) {
+                logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "开始下载x5内核"))
+                TbsDownloader.startDownload(applicationContext)
+            } else {
+                logHandler?.sendMessage(Message.obtain(logHandler, Log.INFO, "已存在，x5内核版本：${QbSdk.getTbsVersion(applicationContext).toString()}"))
+            }
         }
     }
 }

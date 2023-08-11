@@ -10,16 +10,18 @@ import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.TextAppearanceSpan
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import com.example.x5_debug.tookit.UrlFormatTool
 import com.example.x5_debug.tookit.X5Tool
-import java.net.URLDecoder
-import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
 
@@ -55,7 +57,31 @@ class MainActivity : ComponentActivity() {
                 webViewUrl?.setText(contents)
             }
         }
+        initSpinner();
         bindEvents()
+    }
+    /**
+     * 初始化tbs内核最小版本下拉选择框
+     */
+    private fun initSpinner() {
+        val adapterView = ArrayAdapter(applicationContext, R.layout.item_select, X5Tool.coreMinVersions)
+        adapterView.setDropDownViewResource(R.layout.item_dropdown)
+        val sp = findViewById<Spinner>(R.id.spinner)
+        sp.setPromptId(R.string.spinner_prompt)
+        sp.adapter = adapterView;
+        sp.setSelection(X5Tool.selectionIndex)
+        sp.onItemSelectedListener = SpinnerListener()
+    }
+
+    class SpinnerListener: AdapterView.OnItemSelectedListener {
+
+        override fun onItemSelected(parent: AdapterView<*>, view: View?, pos: Int, id: Long) {
+            X5Tool.setSelectionPos(pos)
+        }
+
+        override fun onNothingSelected(parent: AdapterView<*>) {
+            // Another interface callback
+        }
     }
 
     /**
@@ -63,7 +89,7 @@ class MainActivity : ComponentActivity() {
      */
     private fun bindEvents() {
         // 打开
-        val openBtn: Button = findViewById(R.id.openWebview);
+        val openBtn: Button = findViewById(R.id.openWebView);
         openBtn.setOnClickListener {
             log("准备打开x5 webview");
             val webViewUrl = findViewById<EditText>(R.id.webViewUrl);
@@ -87,11 +113,15 @@ class MainActivity : ComponentActivity() {
         escapeBtn.setOnClickListener {
             val webViewUrl = findViewById<EditText>(R.id.webViewUrl);
             val url = webViewUrl.text.toString()
-            val newUrl = if (escaped) URLEncoder.encode(url, "utf-8") else URLDecoder.decode(url, "utf-8")
+            val newUrl = if (escaped) UrlFormatTool.encodeUri(url) else UrlFormatTool.decodeUri(url)
             webViewUrl.setText(newUrl);
             escaped = !escaped
         }
-
+        // 选择tbs最小内核版本
+        val selectTbsMinVer: Button = findViewById(R.id.downloadX5);
+        selectTbsMinVer.setOnClickListener {
+            X5Tool.startDownload(applicationContext, X5Tool.isX5Ready)
+        }
 
     }
 
@@ -106,7 +136,7 @@ class MainActivity : ComponentActivity() {
     /**
      * 记录日志
      */
-    fun log(msg: String, level: Int = Log.INFO): Boolean {
+    private fun log(msg: String, level: Int = Log.INFO): Boolean {
         var iColor = R.color.info;
         var size = 40;
         when (level) {

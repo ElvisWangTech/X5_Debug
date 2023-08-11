@@ -1,5 +1,8 @@
 package com.example.x5_debug.tookit
 
+import java.net.URLDecoder
+import java.net.URLEncoder
+
 /**
  * 格式化url的工具
  */
@@ -16,6 +19,14 @@ class UrlFormatTool {
             // 双斜杠开头
             if ( url.startsWith("//") ) proto.plus(":").plus(url);
             return proto.plus("://").plus(url);
+        }
+
+        fun encodeUri(url: String): String {
+            return url.replaceAfterLast('?', URLEncoder.encode(url.substringAfterLast('?'), "utf-8"))
+        }
+
+        fun decodeUri(url: String): String {
+            return url.replaceAfterLast('?', URLDecoder.decode(url.substringAfterLast('?'), "utf-8"))
         }
     }
 
