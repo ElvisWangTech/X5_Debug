@@ -21,6 +21,13 @@ class UrlFormatTool {
             return proto.plus("://").plus(url);
         }
 
+        fun ensureVconsole(url: String): String {
+            if (url.contains("vconsole")) {
+                return url;
+            }
+            return "$url&vconsole=1";
+        }
+
         fun encodeUri(url: String): String {
             return url.replaceAfterLast('?', URLEncoder.encode(url.substringAfterLast('?'), "utf-8"))
         }

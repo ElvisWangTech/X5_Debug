@@ -93,7 +93,8 @@ class MainActivity : ComponentActivity() {
         openBtn.setOnClickListener {
             log("准备打开x5 webview");
             val webViewUrl = findViewById<EditText>(R.id.webViewUrl);
-            val formatUrl = UrlFormatTool.ensureProtocol(webViewUrl.text.toString(), "https", "http");
+            var formatUrl = UrlFormatTool.ensureProtocol(webViewUrl.text.toString(), "https", "http");
+            formatUrl = UrlFormatTool.ensureVconsole(formatUrl)
             openWebView(formatUrl)
         }
         // x5调试
